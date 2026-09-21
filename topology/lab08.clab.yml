@@ -1,0 +1,61 @@
+name: lab08
+
+mgmt:
+  network: clab08
+  ipv4-subnet: 172.30.80.0/24
+topology:
+  nodes:
+
+    leaf1:
+      kind: linux
+      image: frr-netmiko:lab
+      binds:
+        - ../configs/leaf1:/etc/frr
+
+    spine:
+      kind: linux
+      image: frr-netmiko:lab
+      binds:
+        - ../configs/spine:/etc/frr
+
+    leaf2:
+      kind: linux
+      image: frr-netmiko:lab
+      binds:
+        - ../configs/leaf2:/etc/frr
+
+    host1:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 192.168.100.10/24 dev eth1
+        - ip link set eth1 up
+
+    host2:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 192.168.100.20/24 dev eth1
+        - ip link set eth1 up
+
+  links:
+
+    # Leaf1 - Spine underlay
+    - endpoints:
+        - leaf1:eth1
+        - spine:eth1
+
+    # Spine - Leaf2 underlay
+    - endpoints:
+        - spine:eth2
+        - leaf2:eth1
+
+    # Host1 access
+    - endpoints:
+        - host1:eth1
+        - leaf1:eth2
+
+    # Host2 access
+    - endpoints:
+        - host2:eth1
+        - leaf2:eth2
