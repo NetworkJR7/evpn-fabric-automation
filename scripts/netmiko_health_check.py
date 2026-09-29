@@ -373,7 +373,7 @@ if failed:
 # REPORT
 # -------------------------------------------------------------
 
-report_dir = Path("scripts/reports")
+report_dir = Path("reports")
 report_dir.mkdir(exist_ok=True)
 
 report = (
